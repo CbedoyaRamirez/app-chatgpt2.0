@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +10,31 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background: #f0f0f0;
             display: grid;
-            place-content: center;   
+            place-content: center;
             height: 100vh;
             height: 100dvh;
         }
+
         main {
             width: 400px;
             min-width: 100%;
             height: 70vh;
             background: #fff;
             border: 1px solid;
-            border-radius: 0 0 10px rgb(0,0,0,0.1);
+            border-radius: 0 0 10px rgb(0, 0, 0, 0.1);
             padding: 8px;
             margin-bottom: 16px;
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
-        ul{
+
+        ul {
             display: flex;
             flex-direction: column;
             list-style: none;
             padding: 0;
         }
+
         .message {
             display: flex;
             flex-direction: column;
@@ -37,7 +42,7 @@
             margin: 4px 0;
             padding: 4px 8px;
 
-            > span:first-child {
+            >span:first-child {
                 width: 36px;
                 height: 36px;
                 background: #eee;
@@ -55,51 +60,61 @@
                 margin-top: 4px;
             }
 
-            > span:last-child {
+            >span:last-child {
                 padding: 4px 8px;
             }
 
             &.user {
                 align-self: flex-end;
                 align-items: flex-end;
-                span, p {
-                    background: rgb(216,236,255);
+
+                span,
+                p {
+                    background: rgb(216, 236, 255);
                 }
             }
 
             &.bot {
                 align-self: flex-start;
-                span, p {
-                    background: rgb(189,255,220)
+
+                span,
+                p {
+                    background: rgb(189, 255, 220)
                 }
             }
         }
 
         form {
             display: flex;
+
             input {
                 border-radius: 99999px;
                 flex-grow: 1;
                 border: 0;
-                padding:  8px;
+                padding: 8px;
                 margin-right: 8px;
                 border: 1px solid #ccc;
             }
         }
+
         button {
-            background:  #09f;
+            background: #09f;
             border: 0;
-            color:white;
+            color: white;
             border-radius: 6px;
             cursor: pointer;
             padding: 8px;
 
+            &[disabled] {
+                background: #ccc;
+                opacity: .6;
+            }
+
             &:hover {
-                background: rgb(0,104,173);
+                background: rgb(0, 104, 173);
             }
 
         }
-
     </style>
     <script type="module">
         const $ = el => document.querySelector(el)
@@ -117,43 +132,63 @@
             const messageText = $input.value.trim();
             console.log(messageText)
 
-            if(messageText !== '') {
+            if (messageText !== '') {
                 $input.value = '';
             }
 
-            function addMessage(text, sender) {
-                const cloneTemplate = $template.content.cloneNode(true);
-            }
+            addMessage(messageText, 'user')
+            $button.setAttribute('disabled', true)
+            setTimeout(() => {
+                addMessage('Hola como estas', 'bot')
+                $button.removeAttribute('disabled')
+            }, 2000);
+
         })
+        function addMessage(text, sender) {
+            const cloneTemplate = $template.content.cloneNode(true);
+            const $newMessage = cloneTemplate.querySelector('.message')
+            const $who = $newMessage.querySelector('span')
+            const $text = $newMessage.querySelector('p')
+
+            $text.textContent = text;
+            $who.textContent = sender === 'bot' ? 'GPT' : 'Tú';
+            $newMessage.classList.add(sender)
+
+            
+            $messages.appendChild($newMessage);
+            $container.scrollTop = $container.scrollHeight;
+        }
     </script>
 </head>
+
 <body>
     <main>
         <ul>
-            <li class="message bot" >
+            <li class="message bot">
                 <span>GPT</span>
                 <p>Esta es la repuesta del bot</p>
             </li>
-            <li class="message user" >
+            <li class="message user">
                 <span>Tú</span>
                 <p>Esta es la repuesta del usuario</p>
             </li>
-            <li class="message user" >
+            <li class="message user">
                 <span>Tú</span>
                 <p>Esta es la repuesta del usuario y es una respuesta muy larga para ver que no rompe nada</p>
             </li>
         </ul>
     </main>
     <form action="">
-        <input  name="message" placeholder="Escribe tu mensaje aqui..." >
+        <input name="message" placeholder="Escribe tu mensaje aqui...">
         <button>Enviar</button>
     </form>
 
-    <template id="message-template" >
-        <li class="message" >
+    <template id="message-template">
+        <li class="message">
             <span></span>
-            <span></span>
+            <p></p>
         </li>
     </template>
 </body>
+
 </html>
